@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class AcceleratablePlanarSpeedProvider : MonoBehaviour, IPlanarSpeedProvider, IAcceleratable
+public class AcceleratableSpeedProvider : MonoBehaviour, ISpeedProvider, IAcceleratable
 {
-    [RequireInterface(typeof(IPlanarSpeedProvider))]
+    [RequireInterface(typeof(ISpeedProvider))]
     [SerializeField] private Object _planarSpeedProviderObject;
-    private IPlanarSpeedProvider PlanarSpeedProvider => _planarSpeedProviderObject as IPlanarSpeedProvider;
+    private ISpeedProvider PlanarSpeedProvider => _planarSpeedProviderObject as ISpeedProvider;
 
     private float _targetRelativeMovementSpeed;
     private Coroutine _accelerationCoroutine;
 
-    public float GetPlanarTargetSpeed() => _targetRelativeMovementSpeed * PlanarSpeedProvider.GetPlanarTargetSpeed();
+    public float GetTargetSpeed() => _targetRelativeMovementSpeed * PlanarSpeedProvider.GetTargetSpeed();
 
     public void BeginAcceleration(IAccerlerationProfile accerlerationProfile)
     {

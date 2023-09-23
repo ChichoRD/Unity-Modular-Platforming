@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class PlanarSpeedProvider : MonoBehaviour, IPlanarSpeedProvider
+public class ProfileSpeedProvider : MonoBehaviour, ISpeedProvider
 {
     [RequireInterface(typeof(ISpeedProfile))]
     [SerializeField] private Object _speedProfileObject;
     private ISpeedProfile SpeedProfile => _speedProfileObject as ISpeedProfile;
 
-    public float GetPlanarTargetSpeed() => SpeedProfile.MaxSpeed;
+    public float GetTargetSpeed() => SpeedProfile.Speed;
 }

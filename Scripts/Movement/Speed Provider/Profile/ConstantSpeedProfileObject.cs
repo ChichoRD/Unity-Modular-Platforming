@@ -7,5 +7,5 @@ public class ConstantSpeedProfileObject : ScriptableObject, ISpeedProfile
     private const string PATH = "Movement Profiles/" + NAME;
 
     [SerializeField] private float _speed;
-    public float MaxSpeed => _speed;
+    public float Speed => _speed;
 }

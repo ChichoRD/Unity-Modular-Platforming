@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
-public class ConvergentForceProvider : MonoBehaviour, IPlanarForceProvider
+public class ConvergentForceProvider : MonoBehaviour, IForceProvider
 {
     [RequireInterface(typeof(IRigidbodyAccessor))]
     [SerializeField]
     private Object _rigidbodyAccessor;
     private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessor as IRigidbodyAccessor;
 
-    [RequireInterface(typeof(IPlanarSpeedProvider))]
+    [RequireInterface(typeof(ISpeedProvider))]
     [SerializeField]
     private Object _planarSpeedProvider;
-    private IPlanarSpeedProvider PlanarSpeedProvider => _planarSpeedProvider as IPlanarSpeedProvider;
+    private ISpeedProvider PlanarSpeedProvider => _planarSpeedProvider as ISpeedProvider;
 
     [RequireInterface(typeof(ISpeedMetric))]
     [SerializeField]
@@ -18,9 +18,9 @@ public class ConvergentForceProvider : MonoBehaviour, IPlanarForceProvider
     private ISpeedMetric SpeedMetric => _speedMetricObject as ISpeedMetric;
 
 
-    public float GetPlanarTargetForceMagnitude()
+    public float GetTargetForceMagnitude()
     {
-        float targetSpeed = PlanarSpeedProvider.GetPlanarTargetSpeed();
+        float targetSpeed = PlanarSpeedProvider.GetTargetSpeed();
         float currentSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
 
         const float CONVERGENCE_FACTOR = 0.5f;

@@ -1,4 +1,4 @@
 ﻿public interface ISpeedProfile
 {
-    float MaxSpeed { get; }
+    float Speed { get; }
 }
