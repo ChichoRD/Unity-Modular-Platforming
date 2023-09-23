@@ -1,0 +1,58 @@
+        // m = mass [positive]
+        // v = current speed [positive]
+        // r = relative speed [0, 1]
+        // C = counter movement factor [0, 1]
+        // dt = time step [positive]
+        // F = total Force [uncapped]
+
+        // v_m = max speed [positive]
+        // v_t = v_m * r = target speed [positive]
+        // v_m = v_t / r = max speed [positive]
+        // r = v_t / v_m = relative speed [0, 1]
+        // v * r = v * v_t / v_m
+
+        // F0 = m * (r * ((max(v_m, v) * r - min(v_m, v)) + v * C)) / dt + m * (-v * C) / dt
+        // F1 = m * (v_t - v) / dt
+
+        // DV0 = r * ((max(v_m, v) * r - min(v_m, v)) + v * C) + (-v * C)
+        // DV1 = v_t - v
+
+        // DV0 = r * (max(v_m, v) * r - min(v_m, v)) + r * v * C - v * C
+        // DV0 = r * max(v_m, v) * r - r * min(v_m, v) + r * v * C - v * C
+        /* DV0 = r^2 * max(v_m, v) 
+         *       - r * min(v_m, v)
+         *       + r * v * C
+         *       - v * C
+         *       
+         * DV0 = r * r * max(v_m, v)
+         *       - r * min(v_m, v)
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * max(v_t, v * r)
+         *       - r * min(v_m, v)
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * (max(v_t, v * r) - min(v_m, v))
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * (max(v_t, v * v_t / v_m) - min(v_t / r, v * r / r))
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * (max(v_t, v * v_t / v_m) - min(v_t, v * r) / r)
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * max(v_t, v * v_t / v_m)
+         *       - min(v_t, v * r)
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = r * max(v_t, v * v_t / v_m)
+         *       - min(v_t, v * v_t / v_m)
+         *       + (r - 1) * (v * C)
+         *       
+         * DV0 = v_t * (r * max(1, v / v_m) - min(1, v / v_m))
+         *       + (r - 1) * (v * C)
+         *       
+         * Assume r = 1, C = 1:
+         * DV0 = v_t * (max(1, v / v_m) - min(1, v / v_m))
+         * DV0 = max(v_t, v * r) - min(v_t, v * r)
+         */

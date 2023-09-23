@@ -24,6 +24,7 @@ public class PlanarForceMovementPerformer : MonoBehaviour, IMovementPerformer
                                         && RigidbodyAccessor != null
                                         && new Func<bool>(() =>
                                         {
+                                            Debug.Log($"Processed Input: {MovementInputService.GetMovementInput()}");
                                             RigidbodyAccessor.AddForce(PlanarForceProvider.GetPlanarTargetForceMagnitude() * MovementInputService.GetMovementInput());
                                             return true;
                                         })();

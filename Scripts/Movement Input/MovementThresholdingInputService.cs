@@ -1,21 +1,19 @@
 ﻿using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-public class MovementThresholdingInputProvider : MonoBehaviour,
+public class MovementThresholdingInputService : MonoBehaviour,
+                                                 IMovementInputReader<float>, IMovementInputReader<Vector2>, IMovementInputReader<Vector3>,
                                                  IMovementInputProvider<float>, IMovementInputProvider<Vector2>, IMovementInputProvider<Vector3>,
                                                  IObservableInputService
 {
-    //[RequireInterface(typeof(IMovementInputProvider<object>))]
-    [SerializeReference]
-    private Object _movementInputProviderObject;
-
     [SerializeField] private float _threshold = Mathf.Epsilon;
     public Func<Vector3, Func<float, bool>> ThresholdingMetric { get; set; } = (v) => (t) => v.magnitude > t;
+
+    private Vector3 _lastValidInput;
     private Vector3 _input;
     public Vector3 Input
     {
-        get => _input;
+        get => ThresholdingMetric(_input)(_threshold) ? _input : _lastValidInput;
         set
         {
             Vector3 previousInput = _input;
@@ -27,16 +25,21 @@ public class MovementThresholdingInputProvider : MonoBehaviour,
             if (!wasPreviousInputValid && isCurrentInputValid)
                 InputAppeared?.Invoke(this, EventArgs.Empty);
             if (wasPreviousInputValid && !isCurrentInputValid)
+            {
+                _lastValidInput = previousInput;
                 InputDisappeared?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 
     public event EventHandler InputAppeared;
     public event EventHandler InputDisappeared;
 
-    public float GetMovementInput() => (Input = new Vector3(this.InputProviderFromObject<float, float>(_movementInputProviderObject).GetMovementInput(), 0.0f, 0.0f)).x;
+    public void SetMovementInput(float input) => Input = new Vector3(input, 0.0f, 0.0f);
+    public void SetMovementInput(Vector2 input) => Input = input;
+    public void SetMovementInput(Vector3 input) => Input = input;
 
-    Vector2 IMovementInputProvider<Vector2>.GetMovementInput() => Input = this.InputProviderFromObject<Vector2, Vector2>(_movementInputProviderObject).GetMovementInput();
-
-    Vector3 IMovementInputProvider<Vector3>.GetMovementInput() => Input = this.InputProviderFromObject<Vector3, Vector3>(_movementInputProviderObject).GetMovementInput();
+    public float GetMovementInput() => Input.x;
+    Vector2 IMovementInputProvider<Vector2>.GetMovementInput() => Input;
+    Vector3 IMovementInputProvider<Vector3>.GetMovementInput() => Input;
 }

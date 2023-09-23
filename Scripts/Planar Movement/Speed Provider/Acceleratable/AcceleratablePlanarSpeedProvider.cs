@@ -22,6 +22,7 @@ public class AcceleratablePlanarSpeedProvider : MonoBehaviour, IPlanarSpeedProvi
     private IEnumerator AccerlerateCoroutine(IAccerlerationProfile accerlerationProfile)
     {
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
         for (float t = 0.0f; t < accerlerationProfile.AccelerationTime; t += Time.fixedDeltaTime)
         {
             float normalizedTime = t / accerlerationProfile.AccelerationTime;

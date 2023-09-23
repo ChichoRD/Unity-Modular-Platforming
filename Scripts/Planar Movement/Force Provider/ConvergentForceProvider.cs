@@ -11,18 +11,23 @@ public class ConvergentForceProvider : MonoBehaviour, IPlanarForceProvider
     [SerializeField]
     private Object _planarSpeedProvider;
     private IPlanarSpeedProvider PlanarSpeedProvider => _planarSpeedProvider as IPlanarSpeedProvider;
-    
+
+    [RequireInterface(typeof(ISpeedMetric))]
+    [SerializeField]
+    private Object _speedMetricObject;
+    private ISpeedMetric SpeedMetric => _speedMetricObject as ISpeedMetric;
+
+
     public float GetPlanarTargetForceMagnitude()
     {
         float targetSpeed = PlanarSpeedProvider.GetPlanarTargetSpeed();
-        float currentSpeed = RigidbodyAccessor.Velocity.magnitude;
-        float speedIncrement = targetSpeed - currentSpeed;
+        float currentSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
 
-        const float MAXIMUM_SPEED_CLAMP_FACTOR = 0.5f;
-        float maxSpeedIncrement = targetSpeed * MAXIMUM_SPEED_CLAMP_FACTOR;
+        const float CONVERGENCE_FACTOR = 0.5f;
+        float speedIncrement = (targetSpeed - currentSpeed) * CONVERGENCE_FACTOR;
 
         return RigidbodyAccessor.Mass
-               * Mathf.Clamp(speedIncrement, -maxSpeedIncrement, maxSpeedIncrement)
+               * speedIncrement
                / Time.fixedDeltaTime;
     }
 }
