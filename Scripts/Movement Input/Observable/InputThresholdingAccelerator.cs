@@ -12,15 +12,15 @@ public class InputThresholdingAccelerator : MonoBehaviour
     private Object _acceleratable;
     private IAcceleratable Acceleratable => _acceleratable as IAcceleratable;
 
-    [RequireInterface(typeof(IAccerlerationProfile))]
+    [RequireInterface(typeof(IAccerlerationCurveProvider))]
     [SerializeField]
-    private Object _accelerationProfile;
-    private IAccerlerationProfile AccelerationProfile => _accelerationProfile as IAccerlerationProfile;
+    private Object _accelerationCurveProvider;
+    private IAccerlerationCurveProvider AccerlerationCurveProvider => _accelerationCurveProvider as IAccerlerationCurveProvider;
 
-    [RequireInterface(typeof(IAccerlerationProfile))]
+    [RequireInterface(typeof(IAccerlerationCurveProvider))]
     [SerializeField]
-    private Object _decelerationProfile;
-    private IAccerlerationProfile DecelerationProfile => _decelerationProfile as IAccerlerationProfile;
+    private Object _decelerationCurveProvider;
+    private IAccerlerationCurveProvider DeccerlerationCurveProvider => _decelerationCurveProvider as IAccerlerationCurveProvider;
 
     private void Awake()
     {
@@ -34,6 +34,6 @@ public class InputThresholdingAccelerator : MonoBehaviour
         ObservableInputService.InputDisappeared -= ObservableInputService_InputDisappeared;
     }
 
-    private void ObservableInputService_InputAppeared(object sender, System.EventArgs e) => Acceleratable.BeginAcceleration(AccelerationProfile);
-    private void ObservableInputService_InputDisappeared(object sender, System.EventArgs e) => Acceleratable.BeginAcceleration(DecelerationProfile);
+    private void ObservableInputService_InputAppeared(object sender, System.EventArgs e) => Acceleratable.BeginAcceleration(AccerlerationCurveProvider);
+    private void ObservableInputService_InputDisappeared(object sender, System.EventArgs e) => Acceleratable.BeginAcceleration(DeccerlerationCurveProvider);
 }

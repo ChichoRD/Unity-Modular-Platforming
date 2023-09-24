@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-public class MovementAlignmentProjectorInputProvider : MonoBehaviour,
-                                                       IMovementInputProvider<float>, IMovementInputProvider<Vector2>, IMovementInputProvider<Vector3>
+public class MovementAxisProjectorInputProvider : MonoBehaviour,
+                                                  IMovementInputProvider<float>, IMovementInputProvider<Vector2>, IMovementInputProvider<Vector3>
 {
     [SerializeReference]
     private Object _movementInputProviderObject;

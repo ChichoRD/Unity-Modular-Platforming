@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ProvidedForceTestMovement : MonoBehaviour
+public class PlanarTestMovement : MonoBehaviour
 {
     [RequireInterface(typeof(IMovementInputReader<Vector2>))]
     [SerializeField]

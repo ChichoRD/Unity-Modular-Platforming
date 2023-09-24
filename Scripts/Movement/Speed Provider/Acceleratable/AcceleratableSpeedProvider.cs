@@ -10,29 +10,29 @@ public class AcceleratableSpeedProvider : MonoBehaviour, ISpeedProvider, IAccele
     private float _targetRelativeMovementSpeed;
     private Coroutine _accelerationCoroutine;
 
-    public float GetTargetSpeed() => _targetRelativeMovementSpeed * PlanarSpeedProvider.GetTargetSpeed();
+    public float GetSpeed() => _targetRelativeMovementSpeed * PlanarSpeedProvider.GetSpeed();
 
-    public void BeginAcceleration(IAccerlerationProfile accerlerationProfile)
+    public void BeginAcceleration(IAccerlerationCurveProvider accerlerationCurveProfile)
     {
         StopAccelerationCoroutine();
 
-        _accelerationCoroutine = StartCoroutine(AccerlerateCoroutine(accerlerationProfile));
+        _accelerationCoroutine = StartCoroutine(AccerlerateCoroutine(accerlerationCurveProfile));
     }
 
-    private IEnumerator AccerlerateCoroutine(IAccerlerationProfile accerlerationProfile)
+    private IEnumerator AccerlerateCoroutine(IAccerlerationCurveProvider accerlerationCurveProfile)
     {
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
 
-        for (float t = 0.0f; t < accerlerationProfile.AccelerationTime; t += Time.fixedDeltaTime)
+        for (float t = 0.0f; t < accerlerationCurveProfile.GetAccelerationTime(); t += Time.fixedDeltaTime)
         {
-            float normalizedTime = t / accerlerationProfile.AccelerationTime;
-            float targetRelativeMovementSpeed = accerlerationProfile.AccelerationCurve.Evaluate(normalizedTime);
+            float normalizedTime = t / accerlerationCurveProfile.GetAccelerationTime();
+            float targetRelativeMovementSpeed = accerlerationCurveProfile.AccelerationCurve.Evaluate(normalizedTime);
 
             _targetRelativeMovementSpeed = Mathf.Lerp(_targetRelativeMovementSpeed, targetRelativeMovementSpeed, normalizedTime);
             yield return wait;
         }
 
-        _targetRelativeMovementSpeed = accerlerationProfile.AccelerationCurve.Evaluate(1.0f);
+        _targetRelativeMovementSpeed = accerlerationCurveProfile.AccelerationCurve.Evaluate(1.0f);
         _accelerationCoroutine = null;
     }
 

@@ -20,7 +20,7 @@ public class ConvergentForceProvider : MonoBehaviour, IForceProvider
 
     public float GetTargetForceMagnitude()
     {
-        float targetSpeed = PlanarSpeedProvider.GetTargetSpeed();
+        float targetSpeed = PlanarSpeedProvider.GetSpeed();
         float currentSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
 
         const float CONVERGENCE_FACTOR = 0.5f;

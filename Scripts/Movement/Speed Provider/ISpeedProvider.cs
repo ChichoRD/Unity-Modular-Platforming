@@ -1,4 +1,4 @@
 public interface ISpeedProvider
 {
-    float GetTargetSpeed();
+    float GetSpeed();
 }

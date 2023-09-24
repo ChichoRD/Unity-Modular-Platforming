@@ -1,4 +1,4 @@
 ﻿public interface IAcceleratable
 {
-    void BeginAcceleration(IAccerlerationProfile accerlerationProfile);
+    void BeginAcceleration(IAccerlerationCurveProvider accerlerationProfile);
 }
