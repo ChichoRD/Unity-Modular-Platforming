@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ConvergentForceProvider : MonoBehaviour, IForceProvider
+public class ConvergentSpeedVariationForceProvider : MonoBehaviour, IForceProvider
 {
     [RequireInterface(typeof(IRigidbodyAccessor))]
     [SerializeField]
@@ -17,8 +17,7 @@ public class ConvergentForceProvider : MonoBehaviour, IForceProvider
     private Object _speedMetricObject;
     private ISpeedMetric SpeedMetric => _speedMetricObject as ISpeedMetric;
 
-
-    public float GetTargetForceMagnitude()
+    public float GetForceMagnitude()
     {
         float targetSpeed = PlanarSpeedProvider.GetSpeed();
         float currentSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);

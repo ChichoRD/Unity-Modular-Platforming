@@ -1,4 +1,4 @@
 ﻿public interface IAccerlerationProvider
 {
-    float GetAcceleration();
+    float GetAccelerationMagnitude();
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
-using Object = UnityEngine.Object;
+﻿using UnityEngine;
 
-public class ForceMovementPerformer : MonoBehaviour, IMovementPerformer
+public class ForceInstantaneousApplierMovementPerformer : MonoBehaviour, IMovementPerformer
 {
     [RequireInterface(typeof(IMovementInputProvider<Vector3>))]
     [SerializeField]
@@ -22,9 +20,11 @@ public class ForceMovementPerformer : MonoBehaviour, IMovementPerformer
     public bool TryPerformMovement() => MovementInputProvider != null
                                         && ForceProvider != null
                                         && RigidbodyAccessor != null
-                                        && new Func<bool>(() =>
-                                        {
-                                            RigidbodyAccessor.AddForce(ForceProvider.GetTargetForceMagnitude() * MovementInputProvider.GetMovementInput());
-                                            return true;
-                                        })();
+                                        && TryApplyForce(ForceProvider.GetForceMagnitude() * MovementInputProvider.GetMovementInput());
+
+    private bool TryApplyForce(Vector3 force)
+    {
+        RigidbodyAccessor.AddForce(force);
+        return true;
+    }
 }

@@ -26,5 +26,5 @@ public class JumpParametersProfileObject : ScriptableObject, ISpeedProvider, IAc
      */
 
     public float GetSpeed() => 2.0f * _peakJumpHeight / _timeToPeakJumpHeight;
-    public float GetAcceleration() => -2.0f * _peakJumpHeight / (_timeToPeakJumpHeight * _timeToPeakJumpHeight);
+    public float GetAccelerationMagnitude() => -2.0f * _peakJumpHeight / (_timeToPeakJumpHeight * _timeToPeakJumpHeight);
 }

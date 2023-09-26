@@ -1,4 +1,4 @@
 public interface IForceProvider
 {
-    float GetTargetForceMagnitude();
+    float GetForceMagnitude();
 }
