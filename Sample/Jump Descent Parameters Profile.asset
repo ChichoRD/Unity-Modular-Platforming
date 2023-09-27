@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Jump Descent Parameters Profile
   m_EditorClassIdentifier: 
   _peakJumpHeight: 2.7
-  _timeToPeakJumpHeight: 0.36
+  _timeToPeakJumpHeight: 0.18

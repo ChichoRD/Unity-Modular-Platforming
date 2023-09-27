@@ -58,10 +58,10 @@ public class JumpTestMovement : MonoBehaviour
             float previousJumpSpeed = _currentJumpSpeed;
             _currentJumpSpeed = value;
 
-            bool ascentStarted = previousJumpSpeed <= 0f && _currentJumpSpeed > 0f;
-            bool descentStarted = previousJumpSpeed >= 0f && _currentJumpSpeed < 0f;
+            bool ascentStarted = previousJumpSpeed <= 0.0f && _currentJumpSpeed > 0.0f;
+            bool descentStarted = previousJumpSpeed >= 0.0f && _currentJumpSpeed < 0.0f;
 
-            bool landed = Mathf.Approximately(_currentJumpSpeed, 0f);
+            bool landed = previousJumpSpeed < 0.0f && Mathf.Abs(_currentJumpSpeed) < 0.001f;
 
             if (ascentStarted)
                 AscentStarted?.Invoke();
@@ -114,8 +114,8 @@ public class JumpTestMovement : MonoBehaviour
     {
         JumpGravityPerformer.TryPerformMovement();
 
-        if (_descending)
-            JumpFallExtraGravityPerformer.TryPerformMovement();
+        if (!_descending) return;
+        JumpFallExtraGravityPerformer.TryPerformMovement();
     }
 
     private void JumpAction_Performed(InputAction.CallbackContext obj)
@@ -125,7 +125,7 @@ public class JumpTestMovement : MonoBehaviour
 
     private void JumpAction_Canceled(InputAction.CallbackContext context)
     {
-        if (_ascending)
-            JumpCancelerPerformer.TryPerformMovement();
+        if (!_ascending) return;
+        JumpCancelerPerformer.TryPerformMovement();
     }
 }
