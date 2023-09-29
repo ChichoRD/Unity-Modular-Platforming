@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
+using Object = UnityEngine.Object;
 
-public class JumpTestMovement : MonoBehaviour
+public class ObservableJumpController : MonoBehaviour, IJumpController, IObservableJump
 {
-    [RequireInterface(typeof(IMovementInputReader<Vector3>))]
-    [SerializeField]
-    private Object _movementInputReaderObject;
-    private IMovementInputReader<Vector3> MovementInputReader => _movementInputReaderObject as IMovementInputReader<Vector3>;
-
     [RequireInterface(typeof(IMovementPerformer))]
     [SerializeField]
     private Object _jumpImpulsePerformerObject;
@@ -39,12 +34,9 @@ public class JumpTestMovement : MonoBehaviour
     private Object _speedMetricObject;
     private ISpeedMetric SpeedMetric => _speedMetricObject as ISpeedMetric;
 
-    [SerializeField] private InputActionReference _jumpPerformedInputAction;
-    [SerializeField] private InputActionReference _jumpCanceledInputAction;
-
-    [field: SerializeField] public UnityEvent AscentStarted { get; set; } = new UnityEvent();
-    [field: SerializeField] public UnityEvent DescentStarted { get; set; } =  new UnityEvent();
-    [field: SerializeField] public UnityEvent Landed { get; set; } = new UnityEvent();
+    [field: SerializeField] public UnityEvent AscentStarted { get; private set; } = new UnityEvent();
+    [field: SerializeField] public UnityEvent DescentStarted { get; private set; } =  new UnityEvent();
+    [field: SerializeField] public UnityEvent Landed { get; private set; } = new UnityEvent();
 
     private bool _descending;
     private bool _ascending;
@@ -72,60 +64,18 @@ public class JumpTestMovement : MonoBehaviour
         }
     }
 
-
     private void Awake()
     {
-        _jumpPerformedInputAction.action.performed += JumpAction_Performed;
-        _jumpCanceledInputAction.action.performed += JumpAction_Canceled;
-
         DescentStarted.AddListener(() => _descending = true);
         Landed.AddListener(() => _descending = false);
 
         AscentStarted.AddListener(() => _ascending = true);
         DescentStarted.AddListener(() => _ascending = false);
-
-        MovementInputReader.SetMovementInput(Vector3.up);
     }
 
-    private void OnEnable()
-    {
-        _jumpPerformedInputAction.action.Enable();
-        _jumpCanceledInputAction.action.Enable();
-    }
+    private void Update() => CurrentJumpSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
 
-    private void OnDisable()
-    {
-        _jumpPerformedInputAction.action.Disable();
-        _jumpCanceledInputAction.action.Disable();
-    }
-
-    private void OnDestroy()
-    {
-        _jumpPerformedInputAction.action.performed -= JumpAction_Performed;
-        _jumpCanceledInputAction.action.performed -= JumpAction_Canceled;
-    }
-
-    private void Update()
-    {
-        CurrentJumpSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
-    }
-
-    private void FixedUpdate()
-    {
-        JumpGravityPerformer.TryPerformMovement();
-
-        if (!_descending) return;
-        JumpFallExtraGravityPerformer.TryPerformMovement();
-    }
-
-    private void JumpAction_Performed(InputAction.CallbackContext obj)
-    {
-        JumpImpulsePerformer.TryPerformMovement();
-    }
-
-    private void JumpAction_Canceled(InputAction.CallbackContext context)
-    {
-        if (!_ascending) return;
-        JumpCancelerPerformer.TryPerformMovement();
-    }
+    public IMovementPerformer GetGravityPerformer() => _descending ? JumpFallExtraGravityPerformer : JumpGravityPerformer;
+    public IMovementPerformer GetImpulsePerformer() => JumpImpulsePerformer;
+    public IMovementPerformer GetCancelerPerformer() => _ascending ? JumpCancelerPerformer : null;
 }
