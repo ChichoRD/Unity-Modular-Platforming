@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
-public class ObservableJumpController : MonoBehaviour, IJumpController, IObservableJump
+public class ObservableJumpController : MonoBehaviour, IJumpController, IObservableJumpController
 {
     [RequireInterface(typeof(IMovementPerformer))]
     [SerializeField]
@@ -36,7 +36,8 @@ public class ObservableJumpController : MonoBehaviour, IJumpController, IObserva
 
     [field: SerializeField] public UnityEvent AscentStarted { get; private set; } = new UnityEvent();
     [field: SerializeField] public UnityEvent DescentStarted { get; private set; } =  new UnityEvent();
-    [field: SerializeField] public UnityEvent Landed { get; private set; } = new UnityEvent();
+    [field: SerializeField] public UnityEvent AscentEnded { get; private set; } = new UnityEvent();
+    [field: SerializeField] public UnityEvent DescentEnded { get; private set; } = new UnityEvent();
 
     private bool _descending;
     private bool _ascending;
@@ -53,24 +54,27 @@ public class ObservableJumpController : MonoBehaviour, IJumpController, IObserva
             bool ascentStarted = previousJumpSpeed <= 0.0f && _currentJumpSpeed > 0.0f;
             bool descentStarted = previousJumpSpeed >= 0.0f && _currentJumpSpeed < 0.0f;
 
-            bool landed = previousJumpSpeed < 0.0f && Mathf.Abs(_currentJumpSpeed) < 0.001f;
+            bool ascentEnded = previousJumpSpeed > 0.0f && _currentJumpSpeed <= 0.0f;
+            bool descentEnded = previousJumpSpeed < 0.0f && _currentJumpSpeed >= 0.0f;
 
             if (ascentStarted)
                 AscentStarted?.Invoke();
             if (descentStarted)
                 DescentStarted?.Invoke();
-            if (landed)
-                Landed?.Invoke();
+            if (ascentEnded)
+                AscentEnded?.Invoke();
+            if (descentEnded)
+                DescentEnded?.Invoke();
         }
     }
 
     private void Awake()
     {
+        DescentEnded.AddListener(() => _descending = false);
         DescentStarted.AddListener(() => _descending = true);
-        Landed.AddListener(() => _descending = false);
 
+        AscentEnded.AddListener(() => _ascending = false);
         AscentStarted.AddListener(() => _ascending = true);
-        DescentStarted.AddListener(() => _ascending = false);
     }
 
     private void Update() => CurrentJumpSpeed = SpeedMetric.MeasureSpeed(RigidbodyAccessor.Velocity);
