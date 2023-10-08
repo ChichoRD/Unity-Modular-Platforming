@@ -7,6 +7,10 @@ public class AcceleratableSpeedProvider : MonoBehaviour, ISpeedProvider, IAccele
     [SerializeField] private Object _planarSpeedProviderObject;
     private ISpeedProvider PlanarSpeedProvider => _planarSpeedProviderObject as ISpeedProvider;
 
+    [SerializeField]
+    [Min(0.0f)]
+    private float _curveConvergenceIntensity = 1.0f;
+
     private float _targetRelativeMovementSpeed;
     private Coroutine _accelerationCoroutine;
 
@@ -28,7 +32,7 @@ public class AcceleratableSpeedProvider : MonoBehaviour, ISpeedProvider, IAccele
             float normalizedTime = t / accerlerationCurveProfile.GetAccelerationTime();
             float targetRelativeMovementSpeed = accerlerationCurveProfile.AccelerationCurve.Evaluate(normalizedTime);
 
-            _targetRelativeMovementSpeed = Mathf.Lerp(_targetRelativeMovementSpeed, targetRelativeMovementSpeed, normalizedTime);
+            _targetRelativeMovementSpeed = Mathf.Lerp(_targetRelativeMovementSpeed, targetRelativeMovementSpeed, Mathf.Pow(normalizedTime, _curveConvergenceIntensity));
             yield return wait;
         }
 

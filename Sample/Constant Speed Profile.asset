@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc284709a5d135543b11e9ab2f5fd2d9, type: 3}
   m_Name: Constant Speed Profile
   m_EditorClassIdentifier: 
-  _speed: 10.8
+  _speed: 10

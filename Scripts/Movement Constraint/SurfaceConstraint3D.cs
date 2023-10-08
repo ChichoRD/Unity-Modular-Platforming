@@ -21,10 +21,10 @@ public class SurfaceConstraint3D : MonoBehaviour, IMovementConstraint // TODO - 
         var rayField = RayFieldProivder.GetRayField();
         foreach (var ray in rayField)
         {
-            if (!Physics.Raycast(ray, out RaycastHit hitInfo, ray.Size, _layerMask)) continue;
+            if (!Physics.Raycast(ray, out RaycastHit hitInfo, ray.Size, _layerMask)) continue; // Abstract this
 
             float angle = Vector3.Angle(hitInfo.normal, Vector3.up);
-            if (angle < _minAngle || angle > _maxAngle) continue;
+            if (angle < _minAngle || angle > _maxAngle) continue; // Abstract this
 
             return true;
         }

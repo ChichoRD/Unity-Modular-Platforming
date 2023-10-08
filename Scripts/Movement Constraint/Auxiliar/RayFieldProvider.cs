@@ -19,7 +19,16 @@ public class RayFieldProvider : MonoBehaviour, IRayFieldProvider
     [SerializeField]
     private float _rayLength;
 
-    public Func<Vector3, Vector3> GetRayDirectionFromLocalPosition { get; set; } = (localPosition) => Vector3.Lerp(localPosition.normalized, Vector3.down, Vector3.Dot(localPosition.normalized, Vector3.down));
+    [SerializeField]
+    private Vector3 _defaultRayGeneralDirection = Vector3.down;
+
+    public Func<Vector3, Vector3> GetRayDirectionFromLocalPosition { get; set; }
+
+    private void SetDefaultRayFunction() => GetRayDirectionFromLocalPosition = (localPosition) =>
+                                                                               Vector3.Lerp(localPosition.normalized, _defaultRayGeneralDirection,
+                                                                                            Vector3.Dot(localPosition.normalized, _defaultRayGeneralDirection)).normalized;
+
+    private void Awake() => SetDefaultRayFunction();
 
     public IEnumerable<SizedRay> GetRayField()
     {
@@ -47,7 +56,11 @@ public class RayFieldProvider : MonoBehaviour, IRayFieldProvider
 
     private void OnDrawGizmosSelected()
     {
-        if (_fieldCenterTransform == null) return;
+        if (_fieldCenterTransform == null)
+            return;
+
+        if (GetRayDirectionFromLocalPosition == null)
+            SetDefaultRayFunction();
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(_fieldCenterTransform.position + _fieldOffset, _fieldSize); 
