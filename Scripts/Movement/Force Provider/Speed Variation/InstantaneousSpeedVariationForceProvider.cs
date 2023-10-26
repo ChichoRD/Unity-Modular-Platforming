@@ -7,10 +7,5 @@ public class InstantaneousSpeedVariationForceProvider : MonoBehaviour, IForcePro
     private Object _speedVariationProviderObject;
     private ISpeedProvider SpeedVariationProvider => _speedVariationProviderObject as ISpeedProvider;
 
-    [RequireInterface(typeof(IRigidbodyAccessor))]
-    [SerializeField]
-    private Object _rigidbodyAccessorObject;
-    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
-
-    public float GetForceMagnitude() => RigidbodyAccessor.Mass * SpeedVariationProvider.GetSpeed() / Time.fixedDeltaTime;
+    public float GetForceMagnitude(IRigidbodyAccessor rigidbodyAccessor) => rigidbodyAccessor.Mass * SpeedVariationProvider.GetSpeed() / Time.fixedDeltaTime;
 }

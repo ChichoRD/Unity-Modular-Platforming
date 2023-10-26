@@ -1,4 +1,4 @@
 public interface IMovementPerformer
 {
-    bool TryPerformMovement();
+    bool TryPerformMovement(IRigidbodyAccessor rigidbodyAccessor);
 }

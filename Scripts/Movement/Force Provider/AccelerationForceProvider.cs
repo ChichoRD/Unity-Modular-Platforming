@@ -7,10 +7,5 @@ public class AccelerationForceProvider : MonoBehaviour, IForceProvider
     private Object _accelerationProviderObject;
     private IAccerlerationProvider AccelerationProvider => _accelerationProviderObject as IAccerlerationProvider;
 
-    [RequireInterface(typeof(IRigidbodyAccessor))]
-    [SerializeField]
-    private Object _rigidbodyAccessorObject;
-    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
-
-    public float GetForceMagnitude() => RigidbodyAccessor.Mass * AccelerationProvider.GetAccelerationMagnitude();
+    public float GetForceMagnitude(IRigidbodyAccessor rigidbodyAccessor) => rigidbodyAccessor.Mass * AccelerationProvider.GetAccelerationMagnitude();
 }

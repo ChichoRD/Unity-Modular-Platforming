@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class BufferedJumpImpulsePerformer : MonoBehaviour, IMovementPerformer
 {
@@ -18,8 +21,8 @@ public class BufferedJumpImpulsePerformer : MonoBehaviour, IMovementPerformer
     private Object _durationProviderObject;
     private IDurationProvider DurationProvider => _durationProviderObject as IDurationProvider;
 
-    private Coroutine _performedLastMovementCoroutine;
-    private bool _performedLastMovement;
+    private IRigidbodyAccessor _lastRigidbodyAccessor;
+    private readonly Stopwatch _lastPerformedMovementStopwatch = new Stopwatch();
 
     private void Awake()
     {
@@ -31,36 +34,36 @@ public class BufferedJumpImpulsePerformer : MonoBehaviour, IMovementPerformer
         ObservableJumpController.DescentEnded.RemoveListener(OnDescentEnded);
     }
 
-    public bool TryPerformMovement() => (_performedLastMovement = MovementPerformer.TryPerformMovement())
-                                        & (TryStartPerformedLastMovementCoroutine()
-                                           || (TryStopPerformedLastMovementCoroutine()
-                                               && TryStartPerformedLastMovementCoroutine()));
+    public bool TryPerformMovement(IRigidbodyAccessor rigidbodyAccessor) =>
+        MovementPerformer.TryPerformMovement(_lastRigidbodyAccessor = rigidbodyAccessor)
+        || (TryStartLastPerformedMovementStopwatch()
+            && false);
+
+    private bool TryStartLastPerformedMovementStopwatch()
+    {
+        if (_lastPerformedMovementStopwatch.IsRunning) return false;
+
+        _lastPerformedMovementStopwatch.Restart();
+        return true;
+    }
+
+    private bool TryStopLastPerformedMovementStopwatch()
+    {
+        if (!_lastPerformedMovementStopwatch.IsRunning) return false;
+
+        _lastPerformedMovementStopwatch.Reset();
+        return true;
+    }
+
+    private bool IsLastPerformedMovementWithinDuration() =>
+        _lastPerformedMovementStopwatch.IsRunning
+        && _lastPerformedMovementStopwatch.Elapsed.TotalSeconds < DurationProvider.GetDuration().TotalSeconds;
 
     private void OnDescentEnded()
     {
-        _ = _performedLastMovement
-            || !TryStopPerformedLastMovementCoroutine()
-            || TryPerformMovement();
-    }
-
-    private bool TryStartPerformedLastMovementCoroutine()
-    {
-        if (_performedLastMovementCoroutine != null) return false;
-        _performedLastMovementCoroutine = StartCoroutine(PerformedLastMovementCoroutine());
-        return true;
-    }
-
-    private bool TryStopPerformedLastMovementCoroutine()
-    {
-        if (_performedLastMovementCoroutine == null) return false;
-        StopCoroutine(_performedLastMovementCoroutine);
-        _performedLastMovementCoroutine = null;
-        return true;
-    }
-
-    private IEnumerator PerformedLastMovementCoroutine()
-    {
-        yield return new WaitForSeconds((float)(DurationProvider?.GetDuration().TotalSeconds ?? 0.0f));
-        _performedLastMovementCoroutine = null;
+        bool inTime = IsLastPerformedMovementWithinDuration();
+        _ = inTime
+            || (TryPerformMovement(_lastRigidbodyAccessor)
+                || TryStopLastPerformedMovementStopwatch());
     }
 }

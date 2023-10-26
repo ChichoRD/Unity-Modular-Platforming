@@ -12,19 +12,13 @@ public class ForceInstantaneousApplierMovementPerformer : MonoBehaviour, IMoveme
     private Object _forceProviderObject;
     private IForceProvider ForceProvider => _forceProviderObject as IForceProvider;
 
-    [RequireInterface(typeof(IRigidbodyAccessor))]
-    [SerializeField]
-    private Object _rigidbodyAccessorObject;
-    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
+    public bool TryPerformMovement(IRigidbodyAccessor rigidbodyAccessor) => MovementInputProvider != null
+                                                                            && ForceProvider != null
+                                                                            && TryApplyForce(rigidbodyAccessor, ForceProvider.GetForceMagnitude(rigidbodyAccessor) * MovementInputProvider.GetMovementInput());
 
-    public bool TryPerformMovement() => MovementInputProvider != null
-                                        && ForceProvider != null
-                                        && RigidbodyAccessor != null
-                                        && TryApplyForce(ForceProvider.GetForceMagnitude() * MovementInputProvider.GetMovementInput());
-
-    private bool TryApplyForce(Vector3 force)
+    private bool TryApplyForce(IRigidbodyAccessor rigidbodyAccessor, Vector3 force)
     {
-        RigidbodyAccessor.AddForce(force);
+        rigidbodyAccessor.AddForce(force);
         return true;
     }
 }

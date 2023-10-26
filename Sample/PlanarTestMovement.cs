@@ -8,10 +8,16 @@ public class PlanarTestMovement : MonoBehaviour
     private Object _movementInputReaderObject;
     private IMovementInputReader<Vector2> MovementInputReader => _movementInputReaderObject as IMovementInputReader<Vector2>;
 
-    [RequireInterface(typeof(IMovementPerformer))]
+    [RequireInterface(typeof(IPlanarMovementController))]
     [SerializeField]
-    private Object _movementPerformerObject;
-    private IMovementPerformer MovementPerformer => _movementPerformerObject as IMovementPerformer;
+    private Object _movementControllerObject;
+    private IPlanarMovementController MovementController => _movementControllerObject as IPlanarMovementController;
+
+    [RequireInterface(typeof(IRigidbodyAccessor))]
+    [SerializeField]
+    private Object _rigidbodyAccessorObject;
+    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
+
 
     [SerializeField] private InputActionReference _planarMovementInputAction;
 
@@ -32,6 +38,6 @@ public class PlanarTestMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MovementPerformer.TryPerformMovement();
+        MovementController.GetPlanarMovementPerformer()?.TryPerformMovement(RigidbodyAccessor);
     }
 }

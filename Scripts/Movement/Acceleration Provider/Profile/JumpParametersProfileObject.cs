@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = NAME, menuName = PATH)]
-public class JumpParametersProfileObject : ScriptableObject, ISpeedProvider, IAccerlerationProvider
+public class JumpParametersProfileObject : ScriptableObject, ISpeedProvider, IAccerlerationProvider, IDurationProvider
 {
     private const string NAME = "Jump Parameters Profile";
     private const string PATH = "Movement Profiles/" + NAME;
@@ -27,4 +28,5 @@ public class JumpParametersProfileObject : ScriptableObject, ISpeedProvider, IAc
 
     public float GetSpeed() => 2.0f * _peakJumpHeight / _timeToPeakJumpHeight;
     public float GetAccelerationMagnitude() => -2.0f * _peakJumpHeight / (_timeToPeakJumpHeight * _timeToPeakJumpHeight);
+    public TimeSpan GetDuration() => TimeSpan.FromSeconds(_timeToPeakJumpHeight);
 }

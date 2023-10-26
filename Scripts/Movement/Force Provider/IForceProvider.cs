@@ -1,4 +1,4 @@
 public interface IForceProvider
 {
-    float GetForceMagnitude();
+    float GetForceMagnitude(IRigidbodyAccessor rigidbodyAccessor);
 }

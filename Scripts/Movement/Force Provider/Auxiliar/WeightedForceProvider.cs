@@ -11,5 +11,5 @@ public class WeightedForceProvider : MonoBehaviour, IForceProvider
     [field: SerializeField]
     public float Weight { get; private set; }
 
-    public float GetForceMagnitude() => ForceProvider.GetForceMagnitude() * Weight;
+    public float GetForceMagnitude(IRigidbodyAccessor rigidbodyAccessor) => ForceProvider.GetForceMagnitude(rigidbodyAccessor) * Weight;
 }

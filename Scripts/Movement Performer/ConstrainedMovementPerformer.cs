@@ -14,7 +14,7 @@ public class ConstrainedMovementPerformer : MonoBehaviour, IMovementPerformer
 
     [SerializeField] private bool _allowNullConstraint = true;
 
-    public bool TryPerformMovement() => (MovementConstraint?.CanPerformMovement() ?? _allowNullConstraint)
-                                        && MovementPerformer != null
-                                        && MovementPerformer.TryPerformMovement();
+    public bool TryPerformMovement(IRigidbodyAccessor rigidbodyAccessor) => (MovementConstraint?.CanPerformMovement() ?? _allowNullConstraint)
+                                                                            && MovementPerformer != null
+                                                                            && MovementPerformer.TryPerformMovement(rigidbodyAccessor);
 }

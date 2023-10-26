@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d39eb54a0e695844b84756ee0e377fdd, type: 3}
   m_Name: Jump Buffer Duration Profile
   m_EditorClassIdentifier: 
-  duration: 0.2
+  duration: 3

@@ -13,6 +13,11 @@ public class JumpTestMovement : MonoBehaviour
     private Object _jumpControllerObject;
     private IJumpController JumpController => _jumpControllerObject as IJumpController;
 
+    [RequireInterface(typeof(IRigidbodyAccessor))]
+    [SerializeField]
+    private Object _rigidbodyAccessorObject;
+    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
+
     [SerializeField] private Vector3 _defaultJumpDirection = Vector3.up;
 
     [SerializeField] private InputActionReference _jumpPerformedInputAction;
@@ -49,16 +54,16 @@ public class JumpTestMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        JumpController.GetGravityPerformer()?.TryPerformMovement();
+        JumpController.GetGravityPerformer()?.TryPerformMovement(RigidbodyAccessor);
     }
 
     private void JumpPerformed(InputAction.CallbackContext obj)
     {
-        JumpController.GetImpulsePerformer()?.TryPerformMovement();
+        JumpController.GetImpulsePerformer()?.TryPerformMovement(RigidbodyAccessor);
     }
 
     private void JumpCanceled(InputAction.CallbackContext context)
     {
-        JumpController.GetCancelerPerformer()?.TryPerformMovement();
+        JumpController.GetCancelerPerformer()?.TryPerformMovement(RigidbodyAccessor);
     }
 }

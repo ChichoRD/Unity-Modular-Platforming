@@ -3,7 +3,7 @@ using System;
 using Object = UnityEngine.Object;
 
 [CreateAssetMenu(fileName = NAME, menuName = PATH)]
-public class JumpHeightDurationProfileObject : ScriptableObject, IDurationProvider
+public class JumpHeightDurationProfileObject : ScriptableObject, IDurationProvider, ISpeedProvider
 {
     private const string NAME = "Jump Height Duration Profile";
     private const string PATH = "Movement Profiles/" + NAME;
@@ -35,6 +35,10 @@ public class JumpHeightDurationProfileObject : ScriptableObject, IDurationProvid
      * dt = 2.0 * dh / dv
      */
 
-    public TimeSpan GetDuration() => TimeSpan.FromSeconds(Mathf.Max(2.0f * _minimumJumpHeight / JumpSpeedProvider.GetSpeed() - (float)(JumpCancelDurationProvider?.GetDuration().TotalSeconds ?? 0.0f),
-                                                                    0.0f));
+    public TimeSpan GetDuration() => TimeSpan.FromSeconds(Mathf.Max(
+                                                            2.0f * _minimumJumpHeight / JumpSpeedProvider.GetSpeed() -
+                                                                (float)(JumpCancelDurationProvider?.GetDuration().TotalSeconds ?? 0.0f),
+                                                            0.0f));
+
+    public float GetSpeed() => _minimumJumpHeight / (Mathf.Max((float)GetDuration().TotalSeconds, (float)(JumpCancelDurationProvider?.GetDuration().TotalSeconds ?? 0.0f)) + float.Epsilon);
 }

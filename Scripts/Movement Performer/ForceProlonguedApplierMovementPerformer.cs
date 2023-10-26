@@ -18,38 +18,33 @@ public class ForceProlonguedApplierMovementPerformer : MonoBehaviour, IMovementP
     private Object _durationProviderObject;
     private IDurationProvider DurationProvider => _durationProviderObject as IDurationProvider;
 
-    [RequireInterface(typeof(IRigidbodyAccessor))]
-    [SerializeField]
-    private Object _rigidbodyAccessorObject;
-    private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
-
     private Coroutine _prologuedForceCoroutine;
 
-    public bool TryPerformMovement() => MovementInputProvider != null
-                                        && ForceProvider != null
-                                        && RigidbodyAccessor != null
-                                        && (TryStartProlonguedForceCoroutine()
-                                            || (TryStopProlonguedForceCoroutine()
-                                                && TryStartProlonguedForceCoroutine()));  
+    public bool TryPerformMovement(IRigidbodyAccessor rigidbodyAccessor) => 
+        MovementInputProvider != null
+        && ForceProvider != null
+        && (TryStartProlonguedForceCoroutine(rigidbodyAccessor)
+            || (TryStopProlonguedForceCoroutine()
+                && TryStartProlonguedForceCoroutine(rigidbodyAccessor)));  
 
-    private IEnumerator ProlonguedForceCoroutine()
+    private IEnumerator ProlonguedForceCoroutine(IRigidbodyAccessor rigidbodyAccessor)
     {
         WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
         for (float t = 0.0f; t < DurationProvider.GetDuration().TotalSeconds; t += Time.fixedDeltaTime)
         {
-            RigidbodyAccessor.AddForce(ForceProvider.GetForceMagnitude() * MovementInputProvider.GetMovementInput());
+            rigidbodyAccessor.AddForce(ForceProvider.GetForceMagnitude(rigidbodyAccessor) * MovementInputProvider.GetMovementInput());
             yield return waitForFixedUpdate;
         }
 
-        RigidbodyAccessor.AddForce(ForceProvider.GetForceMagnitude() * MovementInputProvider.GetMovementInput());
+        rigidbodyAccessor.AddForce(ForceProvider.GetForceMagnitude(rigidbodyAccessor) * MovementInputProvider.GetMovementInput());
         _prologuedForceCoroutine = null;
     }
 
-    private bool TryStartProlonguedForceCoroutine()
+    private bool TryStartProlonguedForceCoroutine(IRigidbodyAccessor rigidbodyAccessor)
     {
         if (_prologuedForceCoroutine != null) return false;
 
-        _prologuedForceCoroutine = StartCoroutine(ProlonguedForceCoroutine());
+        _prologuedForceCoroutine = StartCoroutine(ProlonguedForceCoroutine(rigidbodyAccessor));
         return true;
     }   
 
