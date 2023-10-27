@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
+using System;
 
 public class BufferedJumpImpulsePerformer : MonoBehaviour, IMovementPerformer
 {
@@ -61,9 +61,8 @@ public class BufferedJumpImpulsePerformer : MonoBehaviour, IMovementPerformer
 
     private void OnDescentEnded()
     {
-        bool inTime = IsLastPerformedMovementWithinDuration();
-        _ = inTime
+        _ = !IsLastPerformedMovementWithinDuration()
             || (TryPerformMovement(_lastRigidbodyAccessor)
-                || TryStopLastPerformedMovementStopwatch());
+                && TryStopLastPerformedMovementStopwatch());
     }
 }
